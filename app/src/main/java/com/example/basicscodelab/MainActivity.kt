@@ -22,6 +22,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.Button
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 
 
 class MainActivity : ComponentActivity() {
@@ -35,26 +40,71 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+@Composable
+fun MyApp(modifier: Modifier = Modifier) {
+
+    var shouldShowOnboarding by remember { mutableStateOf(true) }
+
+    Surface (modifier) {
+        if (shouldShowOnboarding) {
+            OnboardingScreen(onContinueClicked = { shouldShowOnboarding = false })
+        } else {
+            Greetings()
+        }
+    }
+}
 
 @Composable
-fun MyApp(modifier: Modifier = Modifier, names: List<String> = listOf("World", "Compose")
+fun OnboardingScreen (onContinueClicked: () -> Unit, modifier: Modifier = Modifier) {
+    var shouldShowOnboarding by remember { mutableStateOf(true) }
+
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Welcome to the Basics Codelab!")
+        Button(
+            modifier = Modifier.padding(vertical = 24.dp),
+            onClick =onContinueClicked
+        ) {
+            Text("Continue")
+        }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 320, heightDp = 320)
+@Composable
+fun OnboardingPreview() {
+    BasicsCodelabTheme {
+        OnboardingScreen(onContinueClicked = {})
+    }
+}
+
+@Composable
+private fun Greetings(modifier: Modifier = Modifier, names: List<String> = listOf("World", "Compose")
 ) {
-    Column (modifier = modifier.padding(vertical = 4.dp)) {
+    Column(modifier = modifier.padding(vertical = 4.dp)) {
         for (name in names) {
             Greeting(name = name)
         }
     }
-
 }
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
+
     val expanded = remember { mutableStateOf(false) }
+
     val extraPadding = if (expanded.value) 48.dp else 0.dp
+
     Surface (color = MaterialTheme.colorScheme.primary, modifier = modifier.padding(vertical = 4.dp,
-        horizontal = 8.dp)){
+        horizontal = 8.dp)
+    ){
         Row (modifier = Modifier.padding(24.dp)){
-            Column (modifier = Modifier.weight(1f).padding(bottom = extraPadding)){
+            Column (modifier = Modifier
+                .weight(1f)
+                .padding(bottom = extraPadding)){
                 Text(text = "Hello",)
                 Text(text = name)
             }
@@ -66,10 +116,20 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     }
 }
 
+
 @Preview(showBackground = true, widthDp = 320 )
 @Composable
 fun GreetingPreview() {
     BasicsCodelabTheme {
-        MyApp()
+        Greetings()
     }
 }
+
+@Preview
+@Composable
+fun MyAppPreview() {
+    BasicsCodelabTheme {
+        MyApp(Modifier.fillMaxSize())
+    }
+}
+
