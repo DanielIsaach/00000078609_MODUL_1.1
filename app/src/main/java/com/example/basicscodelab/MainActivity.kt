@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.basicscodelab.ui.theme.BasicsCodelabTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.text.font.AndroidFont
 import androidx.compose.ui.unit.dp
 
 
@@ -22,15 +23,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             BasicsCodelabTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
+                    MyApp(modifier = Modifier.fillMaxSize())
                 }
             }
         }
+    }
+
+
+@Composable
+fun MyApp(modifier: Modifier = Modifier) {
+    Surface (
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Greeting ("Android")
     }
 }
 
@@ -42,13 +48,12 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             modifier = modifier.padding(24.dp)
         )
     }
-
 }
 
-@Preview(showBackground = true, name = "Text preview")
+@Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     BasicsCodelabTheme {
-        Greeting(name = "Android")
+        MyApp()
     }
 }
