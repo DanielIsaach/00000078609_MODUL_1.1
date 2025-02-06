@@ -30,6 +30,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.ui.unit.coerceAtLeast
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 
 
 class MainActivity : ComponentActivity() {
@@ -48,6 +52,7 @@ fun MyApp(modifier: Modifier = Modifier) {
 
     var shouldShowOnboarding by rememberSaveable { mutableStateOf(false) }
 
+
     Surface (modifier) {
         if (shouldShowOnboarding) {
             OnboardingScreen(onContinueClicked = { shouldShowOnboarding = false })
@@ -59,7 +64,6 @@ fun MyApp(modifier: Modifier = Modifier) {
 
 @Composable
 fun OnboardingScreen (onContinueClicked: () -> Unit, modifier: Modifier = Modifier) {
-    var shouldShowOnboarding by remember { mutableStateOf(true) }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -76,6 +80,46 @@ fun OnboardingScreen (onContinueClicked: () -> Unit, modifier: Modifier = Modifi
     }
 }
 
+@Composable
+private fun Greetings(modifier: Modifier = Modifier, names: List<String> = List(10) { "$it" }
+) {
+    LazyColumn(modifier = modifier.padding(vertical = 4.dp)) {
+        items(items = names) { name ->
+            Greeting(name = name)
+        }
+    }
+}
+
+@Composable
+private fun Greeting(name: String, modifier: Modifier = Modifier) {
+
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
+    val extraPadding by animateDpAsState(
+        if (expanded) 48.dp else 0.dp,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        )
+    )
+    Surface (color = MaterialTheme.colorScheme.primary, modifier = modifier.padding(vertical = 4.dp,
+        horizontal = 8.dp)
+    ){
+        Row (modifier = Modifier.padding(24.dp)){
+            Column (modifier = Modifier
+                .weight(1f)
+                .padding(bottom = extraPadding.coerceAtLeast(0.dp))){
+                Text(text = "Hello",)
+                Text(text = name)
+            }
+            ElevatedButton(onClick = { expanded = !expanded })
+            {
+            Text(if(expanded) "Show less" else "Show more")
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true, widthDp = 320, heightDp = 320)
 @Composable
 fun OnboardingPreview() {
@@ -83,42 +127,6 @@ fun OnboardingPreview() {
         OnboardingScreen(onContinueClicked = {})
     }
 }
-
-@Composable
-private fun Greetings(modifier: Modifier = Modifier, names: List<String> = List(10) {"$it"}
-) {
-    Column(modifier = modifier.padding(vertical = 4.dp)) {
-        for (name in names) {
-            Greeting(name = name)
-        }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-
-    val expanded = remember { mutableStateOf(false) }
-
-    val extraPadding = if (expanded.value) 48.dp else 0.dp
-
-    Surface (color = MaterialTheme.colorScheme.primary, modifier = modifier.padding(vertical = 4.dp,
-        horizontal = 8.dp)
-    ){
-        Row (modifier = Modifier.padding(24.dp)){
-            Column (modifier = Modifier
-                .weight(1f)
-                .padding(bottom = extraPadding)){
-                Text(text = "Hello",)
-                Text(text = name)
-            }
-            ElevatedButton(onClick = { expanded.value = !expanded.value })
-            {
-            Text(if(expanded.value) "Show less" else "Show more")
-            }
-        }
-    }
-}
-
 
 @Preview(showBackground = true, widthDp = 320 )
 @Composable
